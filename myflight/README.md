@@ -10,7 +10,7 @@
 
 ## 🎨 디자인
 
-- [Figma 디자인 링크](https://www.figma.com/design/EnKmFNXYHBSnCCvgNdRGid/MyFlight?node-id=0-1&p=f&t=VhAHVGhepppTjhHW-0)  
+- [Figma 디자인 링크](https://www.figma.com/design/EnKmFNXYHBSnCCvgNdRGid/MyFlight?node-id=0-1&p=f&t=VhAHVGhepppTjhHW-0)
 
 ## 🚀 실행 방법
 
@@ -41,8 +41,7 @@
 2. 필수 패키지 설치
    `flutter pub add file_picker google_ml_kit riverpod dio hive`
 3. 프로젝트 실행
-  `flutter run`
-
+   `flutter run`
 
 ---
 
@@ -81,4 +80,26 @@
 - OCR은 google_ml_kit 사용 (API키 불필요, 무료, 한글 인식률 높음)
 - 복잡한 레이아웃은 Regex 후처리로 정확도 개선
 - 모든 기능은 무료/오프라인 우선
+
+---
+
+## 📱 iOS/Android 실행 환경 간단 정리
+
+- **iOS 실행**
+
+  - Xcode에서만 실행 가능 (시뮬레이터/실기기)
+  - Cursor, VSCode 등에서 실행해도 내부적으로 Xcode가 필요함
+
+- **Android 실행**
+  - Android Studio, Cursor, VSCode, 터미널 등에서 실행 가능
+  - Xcode에서는 Android 실행 불가
+
+**즉:**
+
+- iOS → Xcode(필수)
+- Android → Android Studio/터미널/다른 IDE
+- Cursor/VSCode에서 둘 다 실행 가능하지만, iOS는 내부적으로 Xcode가 필요함
+
+```
+
 ```
