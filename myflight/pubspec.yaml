@@ -39,6 +39,8 @@ dependencies:
   riverpod: ^2.6.1
   dio: ^5.8.0+1
   hive: ^2.2.3
+  flutter_map: ^8.2.1
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
