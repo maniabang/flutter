@@ -5,11 +5,10 @@ import 'package:latlong2/latlong.dart';
 class MyRoutePage extends StatelessWidget {
   const MyRoutePage({super.key});
 
-  // mock 데이터: 출발지/도착지 위도, 경도, 공항명, 날짜
   static final List<Map<String, dynamic>> mockRoutes = [
     {
-      'from': LatLng(37.4602, 126.4407), // 인천국제공항
-      'to': LatLng(35.7732, 140.3874),   // 나리타국제공항
+      'from': LatLng(37.4602, 126.4407),
+      'to': LatLng(35.7732, 140.3874),
       'fromName': '인천국제공항',
       'toName': '나리타국제공항',
       'depart': '2019.08.04',
@@ -17,8 +16,8 @@ class MyRoutePage extends StatelessWidget {
       'duration': '4일',
     },
     {
-      'from': LatLng(37.4602, 126.4407), // 인천국제공항
-      'to': LatLng(34.6937, 135.5023),   // 오사카 간사이공항(임의)
+      'from': LatLng(37.4602, 126.4407), 
+      'to': LatLng(34.6937, 135.5023),
       'fromName': '인천국제공항',
       'toName': '간사이국제공항',
       'depart': '2020.01.12',
@@ -26,8 +25,8 @@ class MyRoutePage extends StatelessWidget {
       'duration': '8일',
     },
     {
-      'from': LatLng(37.4602, 126.4407), // 인천국제공항
-      'to': LatLng(40.6413, -73.7781),   // 뉴욕 JFK
+      'from': LatLng(37.4602, 126.4407), 
+      'to': LatLng(40.6413, -73.7781), 
       'fromName': '인천국제공항',
       'toName': 'JFK국제공항',
       'depart': '2021.05.03',
@@ -35,8 +34,8 @@ class MyRoutePage extends StatelessWidget {
       'duration': '7일',
     },
     {
-      'from': LatLng(37.4602, 126.4407), // 인천국제공항
-      'to': LatLng(48.3538, 11.7861),    // 뮌헨공항
+      'from': LatLng(37.4602, 126.4407), 
+      'to': LatLng(48.3538, 11.7861), 
       'fromName': '인천국제공항',
       'toName': '뮌헨국제공항',
       'depart': '2022.09.15',
@@ -44,8 +43,8 @@ class MyRoutePage extends StatelessWidget {
       'duration': '7일',
     },
     {
-      'from': LatLng(37.4602, 126.4407), // 인천국제공항
-      'to': LatLng(51.4700, -0.4543),    // 런던 히드로
+      'from': LatLng(37.4602, 126.4407), 
+      'to': LatLng(51.4700, -0.4543), 
       'fromName': '인천국제공항',
       'toName': '히드로공항',
       'depart': '2023.03.28',
