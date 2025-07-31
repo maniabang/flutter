@@ -14,7 +14,7 @@ class MyRoutePage extends StatelessWidget {
       'toName': '나리타국제공항',
       'depart': '2019.08.04',
       'arrive': '2019.08.07',
-      'duration': '3박 4일',
+      'duration': '4일',
     },
     {
       'from': LatLng(37.4602, 126.4407), // 인천국제공항
