@@ -3,8 +3,11 @@ import 'splash_screen.dart';
 import 'home_screen.dart';
 import 'travel_info_page.dart';
 import 'my_route_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
