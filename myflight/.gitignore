@@ -45,5 +45,5 @@ app.*.map.json
 /android/app/release
 
 # Firebase/Google API Key
-myflight/android/app/google-services.json
-myflight/ios/Runner/GoogleService-Info.plist
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
