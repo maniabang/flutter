@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -88,7 +91,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(width: 24),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: pickAndUploadFile,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF2966D8),
                   side: const BorderSide(color: Color(0xFF2966D8), width: 1.5),
@@ -104,5 +107,22 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Future<void> pickAndUploadFile() async {
+  // 1. 파일 선택 (이미지)
+  final result = await FilePicker.platform.pickFiles(type: FileType.image);
+  if (result != null && result.files.single.path != null) {
+    final filePath = result.files.single.path!;
+    final fileName = result.files.single.name;
+
+    // 2. Storage에 업로드
+    final ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
+    await ref.putFile(File(filePath));
+
+    // 3. 다운로드 URL 얻기 (필요시)
+    final url = await ref.getDownloadURL();
+    print('업로드 완료! 다운로드 URL: $url');
   }
 } 
