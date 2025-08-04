@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class HomeScreen extends StatelessWidget {
@@ -78,7 +79,7 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: takePhotoAndUpload,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2966D8),
                   foregroundColor: Colors.white,
@@ -124,5 +125,19 @@ Future<void> pickAndUploadFile() async {
     // 3. 다운로드 URL 얻기 (필요시)
     final url = await ref.getDownloadURL();
     print('업로드 완료! 다운로드 URL: $url');
+  }
+}
+
+// 카메라로 사진 촬영 후 업로드
+Future<void> takePhotoAndUpload() async {
+  final picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+  if (photo != null) {
+    final file = File(photo.path);
+    final fileName = photo.name;
+    final ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
+    await ref.putFile(file);
+    final url = await ref.getDownloadURL();
+    print('카메라 업로드 완료! 다운로드 URL: $url');
   }
 } 
