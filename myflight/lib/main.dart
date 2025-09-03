@@ -3,11 +3,11 @@ import 'splash_screen.dart';
 import 'home_screen.dart';
 import 'travel_info_page.dart';
 import 'my_route_page.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp(); // 임시 주석 처리
   runApp(const MyApp());
 }
 
