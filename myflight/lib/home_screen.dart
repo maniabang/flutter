@@ -5,8 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'dart:io';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isLoading = false;
 
   // OCR로 텍스트 추출
   Future<String> extractTextFromImage(String imagePath) async {
@@ -65,98 +72,282 @@ class HomeScreen extends StatelessWidget {
     return '미확인';
   }
 
+  // OCR 결과를 다이얼로그로 표시
+  void _showOCRResult({
+    required String fileName,
+    required List<String> dates,
+    required List<String> countries,
+    required String entryType,
+    required String fullText,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 제목
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'OCR 추출 완료!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2966D8),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                
+                // 추출된 정보
+                if (countries.isNotEmpty) ...[
+                  _buildInfoCard(
+                    icon: Icons.public,
+                    title: '추출된 국가',
+                    content: countries.join(', '),
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                
+                if (dates.isNotEmpty) ...[
+                  _buildInfoCard(
+                    icon: Icons.calendar_today,
+                    title: '추출된 날짜',
+                    content: dates.take(5).join(', ') + (dates.length > 5 ? ' 외 ${dates.length - 5}개' : ''),
+                    color: Colors.green,
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                
+                _buildInfoCard(
+                  icon: Icons.flight_takeoff,
+                  title: '출입국 유형',
+                  content: entryType,
+                  color: Colors.orange,
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // 전체 텍스트 보기 (접기/펼치기)
+                ExpansionTile(
+                  title: const Text(
+                    '전체 추출 텍스트',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        fullText.isEmpty ? '텍스트를 추출하지 못했습니다.' : fullText,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // 버튼들
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF2966D8),
+                          side: const BorderSide(color: Color(0xFF2966D8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('닫기'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          // TODO: 여행기록 페이지로 이동하며 데이터 전달
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('여행기록에 저장되었습니다!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2966D8),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('저장'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // 정보 카드 위젯
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String content,
+    required Color color,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        border: Border.all(color: color.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                content,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   // 갤러리에서 이미지 선택 후 OCR 및 업로드
   Future<void> pickAndUploadFile() async {
+    if (_isLoading) return;
+    
     try {
+      setState(() => _isLoading = true);
+      
       final result = await FilePicker.platform.pickFiles(type: FileType.image);
       if (result != null && result.files.single.path != null) {
         final filePath = result.files.single.path!;
         final fileName = result.files.single.name;
         
-        print('=== OCR 텍스트 추출 시작 ===');
-        
-        // 1. OCR로 텍스트 추출
+        // OCR로 텍스트 추출
         final extractedText = await extractTextFromImage(filePath);
-        print('추출된 텍스트:\n$extractedText');
         
-        // 2. 날짜 추출
+        // 날짜, 국가, 유형 추출
         final dates = extractDates(extractedText);
-        print('추출된 날짜: $dates');
-        
-        // 3. 국가명 추출
         final countries = extractCountries(extractedText);
-        print('추출된 국가: $countries');
-        
-        // 4. 출입국 유형 판단
         final entryType = detectEntryType(extractedText);
-        print('출입국 유형: $entryType');
         
-        // 5. Firebase Storage에 업로드 (임시 주석 처리)
-        // final ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
-        // await ref.putFile(File(filePath));
-        // final url = await ref.getDownloadURL();
-        
-        print('=== 처리 완료 ===');
-        print('OCR 완료! 파일: $fileName');
-        print('날짜: $dates');
-        print('국가: $countries');
-        print('유형: $entryType');
-        
-        // 성공 메시지 표시 (나중에 UI로 변경 가능)
-        if (countries.isNotEmpty || dates.isNotEmpty) {
-          print('🎉 성공적으로 정보를 추출했습니다!');
-        }
+        // 결과 표시
+        _showOCRResult(
+          fileName: fileName,
+          dates: dates,
+          countries: countries,
+          entryType: entryType,
+          fullText: extractedText,
+        );
       }
     } catch (e) {
-      print('오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('오류 발생: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
   // 카메라로 사진 촬영 후 OCR 및 업로드
   Future<void> takePhotoAndUpload() async {
+    if (_isLoading) return;
+    
     try {
+      setState(() => _isLoading = true);
+      
       final picker = ImagePicker();
       final XFile? photo = await picker.pickImage(source: ImageSource.camera);
       if (photo != null) {
-        final file = File(photo.path);
         final fileName = photo.name;
         
-        print('=== OCR 텍스트 추출 시작 ===');
-        
-        // 1. OCR로 텍스트 추출
+        // OCR로 텍스트 추출
         final extractedText = await extractTextFromImage(photo.path);
-        print('추출된 텍스트:\n$extractedText');
         
-        // 2. 날짜 추출
+        // 날짜, 국가, 유형 추출
         final dates = extractDates(extractedText);
-        print('추출된 날짜: $dates');
-        
-        // 3. 국가명 추출
         final countries = extractCountries(extractedText);
-        print('추출된 국가: $countries');
-        
-        // 4. 출입국 유형 판단
         final entryType = detectEntryType(extractedText);
-        print('출입국 유형: $entryType');
         
-        // 5. Firebase Storage에 업로드 (임시 주석 처리)
-        // final ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
-        // await ref.putFile(file);
-        // final url = await ref.getDownloadURL();
-        
-        print('=== 처리 완료 ===');
-        print('카메라 OCR 완료! 파일: $fileName');
-        print('날짜: $dates');
-        print('국가: $countries');
-        print('유형: $entryType');
-        
-        // 성공 메시지 표시 (나중에 UI로 변경 가능)
-        if (countries.isNotEmpty || dates.isNotEmpty) {
-          print('🎉 성공적으로 정보를 추출했습니다!');
-        }
+        // 결과 표시
+        _showOCRResult(
+          fileName: fileName,
+          dates: dates,
+          countries: countries,
+          entryType: entryType,
+          fullText: extractedText,
+        );
       }
     } catch (e) {
-      print('오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('오류 발생: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -178,87 +369,128 @@ class HomeScreen extends StatelessWidget {
         ),
         toolbarHeight: 100,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 40),
-          // 업로드 카드
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5FAFF),
-                border: Border.all(color: Color(0xFF2966D8), width: 1.5),
-                borderRadius: BorderRadius.circular(6),
+          Column(
+            children: [
+              const SizedBox(height: 40),
+              // 업로드 카드
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5FAFF),
+                    border: Border.all(color: Color(0xFF2966D8), width: 1.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 비행기 아이콘
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2966D8),
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF2966D8).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.flight_takeoff,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // 업로드 텍스트
+                      const Text(
+                        '출입국/여권 스탬프 업로드',
+                        style: TextStyle(
+                          color: Color(0xFF2966D8),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // 안내 텍스트
+                      const Text(
+                        '출입국기록서 또는 여권 스탬프를 촬영하세요\nOCR로 자동 추출됩니다',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF8A8A8A),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              const SizedBox(height: 40),
+              // 버튼 2개
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 파란 정사각형
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2966D8),
-                      borderRadius: BorderRadius.circular(4),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : takePhotoAndUpload,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2966D8),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(100, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
+                    child: const Text('카메라', style: TextStyle(fontSize: 16)),
                   ),
-                  const SizedBox(height: 16),
-                  // 업로드 텍스트
-                  const Text(
-                    '출입국/여권 스탬프 업로드',
-                    style: TextStyle(
-                      color: Color(0xFF2966D8),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                  const SizedBox(width: 24),
+                  OutlinedButton(
+                    onPressed: _isLoading ? null : pickAndUploadFile,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF2966D8),
+                      side: const BorderSide(color: Color(0xFF2966D8), width: 1.5),
+                      minimumSize: const Size(100, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  // 안내 텍스트
-                  const Text(
-                    '출입국기록서 또는 여권 스탬프를 촬영하세요\nOCR로 자동 추출됩니다',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF8A8A8A),
-                      fontSize: 14,
-                    ),
+                    child: const Text('갤러리', style: TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 40),
-          // 버튼 2개
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: takePhotoAndUpload,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2966D8),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(100, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-                child: const Text('카메라', style: TextStyle(fontSize: 16)),
-              ),
-              const SizedBox(width: 24),
-              OutlinedButton(
-                onPressed: pickAndUploadFile,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF2966D8),
-                  side: const BorderSide(color: Color(0xFF2966D8), width: 1.5),
-                  minimumSize: const Size(100, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-                child: const Text('갤러리', style: TextStyle(fontSize: 16)),
-              ),
             ],
           ),
+          
+          // 로딩 오버레이
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'OCR 처리 중...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
