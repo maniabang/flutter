@@ -53,7 +53,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      resizeToAvoidBottomInset: true, // 키보드 처리
+      body: GestureDetector(
+        onTap: () {
+          // 화면 다른 부분 탭하면 키보드 닫기
+          FocusScope.of(context).unfocus();
+        },
+        child: _pages[_selectedIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
