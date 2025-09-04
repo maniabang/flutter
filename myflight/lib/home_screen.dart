@@ -363,11 +363,11 @@ class _HomeScreenState extends State<HomeScreen> {
           'MyFlight',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 32,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
-        toolbarHeight: 100,
+        toolbarHeight: 70,
       ),
       body: Stack(
         children: [

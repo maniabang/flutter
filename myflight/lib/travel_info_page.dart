@@ -30,6 +30,7 @@ class TravelInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
+      resizeToAvoidBottomInset: true, // 키보드가 올라올 때 화면 조정
       appBar: AppBar(
         backgroundColor: const Color(0xFF2966D8),
         elevation: 0,
@@ -38,125 +39,131 @@ class TravelInfoPage extends StatelessWidget {
           '여행 정보 확인',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 28,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
-        toolbarHeight: 80,
+        toolbarHeight: 70,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        itemCount: mockTravelList.length,
-        itemBuilder: (context, idx) {
-          final travel = mockTravelList[idx];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 32),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.assignment, color: Colors.brown, size: 20),
-                    const SizedBox(width: 6),
-                    const Text(
-                      '인식된 출입국 정보',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F8EC),
-                          border: Border.all(color: Color(0xFF6FCF97)),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('출국일', style: TextStyle(color: Color(0xFF6FCF97), fontWeight: FontWeight.bold)),
-                            Text(travel['출국일'] ?? '', style: const TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F8EC),
-                          border: Border.all(color: Color(0xFF6FCF97)),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('입국일', style: TextStyle(color: Color(0xFF6FCF97), fontWeight: FontWeight.bold)),
-                            Text(travel['입국일'] ?? '', style: const TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    const Icon(Icons.flight_takeoff, color: Color(0xFF2966D8), size: 20),
-                    const SizedBox(width: 6),
-                    const Text(
-                      '여행지 정보 입력',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: '출발지를 입력하세요 (예: 인천국제공항)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: '도착지를 입력하세요 (예: 나리타국제공항)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                  ),
-                ),
-              ],
-            ),
-          );
+      body: GestureDetector(
+        onTap: () {
+          // 화면 다른 부분 탭하면 키보드 닫기
+          FocusScope.of(context).unfocus();
         },
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          itemCount: mockTravelList.length,
+          itemBuilder: (context, idx) {
+            final travel = mockTravelList[idx];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 32),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.assignment, color: Colors.brown, size: 20),
+                      const SizedBox(width: 6),
+                      const Text(
+                        '인식된 출입국 정보',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F8EC),
+                            border: Border.all(color: Color(0xFF6FCF97)),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('출국일', style: TextStyle(color: Color(0xFF6FCF97), fontWeight: FontWeight.bold)),
+                              Text(travel['출국일'] ?? '', style: const TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F8EC),
+                            border: Border.all(color: Color(0xFF6FCF97)),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('입국일', style: TextStyle(color: Color(0xFF6FCF97), fontWeight: FontWeight.bold)),
+                              Text(travel['입국일'] ?? '', style: const TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      const Icon(Icons.flight_takeoff, color: Color(0xFF2966D8), size: 20),
+                      const SizedBox(width: 6),
+                      const Text(
+                        '여행지 정보 입력',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: '출발지를 입력하세요 (예: 인천국제공항)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: '도착지를 입력하세요 (예: 나리타국제공항)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
